@@ -12,13 +12,22 @@
   },
   "author": "Alexandra Larina",
   "devDependencies": {
+    "@babel/core": "^7.5.4",
+    "@babel/preset-env": "^7.5.4",
+    "babel-loader": "^8.0.6",
     "eslint": "5.7.0",
-    "eslint-config-htmlacademy": "0.5.2"
+    "eslint-config-htmlacademy": "0.5.2",
+    "lodash": "^4.17.14",
+    "webpack": "^4.35.3",
+    "webpack-cli": "3.3.6",
+    "webpack-dev-server": "3.7.2"
   },
   "license": "MIT",
   "dependencies": {},
   "scripts": {
-    "test": "eslint js/"
+    "test": "eslint js/",
+    "build": "webpack",
+    "start": "webpack-dev-server --open"
   },
   "engines": {
     "node": "8.11"
