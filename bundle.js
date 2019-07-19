@@ -137,8 +137,7 @@ const renderBigPicture = (element, data) => {
   element.querySelector(`.social__comment-count`).innerHTML = `
     ${data.comments.length <= MAX_COMMENTS_SHOWN ? data.comments.length : MAX_COMMENTS_SHOWN}
     из <span class="comments-count">${data.comments.length}</span> комментариев
-    `.trim(); // element.querySelector(`.comments-count`).textContent = data.comments.length;
-
+    `.trim();
   element.querySelector(`.social__comments`).innerHTML = createComments(data.comments);
   element.querySelector(`.social__caption`).textContent = data.description;
   return element;

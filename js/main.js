@@ -13,6 +13,12 @@ const pictureTemplate = document.querySelector(`#picture`).content.querySelector
 const picturesContainerElement = document.querySelector(`.pictures.container`);
 const bigPictureElement = document.querySelector(`.big-picture`);
 
+const uploadPictureInputElement = document.querySelector(`#upload-file`);
+const uploadPictureElement = document.querySelector(`.img-upload__overlay`);
+
+const uploadPictureElementCancelBtn = uploadPictureElement.querySelector(`#upload-cancel`);
+const uploadPictureFormElement = document.querySelector(`#upload-select-image`);
+
 const pictureContentFragment = document.createDocumentFragment();
 
 const createPictureNode = (data) => {
@@ -59,10 +65,21 @@ const fillFragment = (fragment, dataArray) => {
   return fragment;
 };
 
+const uploadFormCancelHandler = () => {
+  uploadPictureFormElement.reset();
+  pictureUploadElement.classList.add(`hidden`);
+};
+
 const pictureDataArray = createPicturesArray(PICTURES_AMOUNT, PICTURES_DATA);
 picturesContainerElement.appendChild(fillFragment(pictureContentFragment, pictureDataArray));
 
-bigPictureElement.classList.remove(`hidden`);
+// bigPictureElement.classList.remove(`hidden`);
 
 renderBigPicture(bigPictureElement, createPicture(BIG_PIC_INDEX, PICTURES_DATA));
 
+uploadPictureInputElement.addEventListener(`change`, (evt) => {
+  evt.preventDefault();
+  uploadPictureElement.classList.remove(`hidden`);
+});
+
+uploadPictureElementCancelBtn.addEventListener(`click`, uploadFormCancelHandler);
