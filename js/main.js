@@ -1,6 +1,18 @@
-import {createPicture, createPicturesArray, PICTURES_DATA} from './mocks';
-import {fillFragment, renderBigPicture} from './pictures';
-import {uploadFormCancelHandler, uploadFormOpenHandler} from './upload-form';
+import {
+  createPicture,
+  createPicturesArray,
+  PICTURES_DATA
+} from './mocks';
+import {
+  fillFragment,
+  renderBigPicture
+} from './pictures';
+import {
+  uploadFormCancelHandler,
+  uploadFormOpenHandler,
+  hashTagsInputElement,
+  descriptionTextAreaElement
+} from './upload-form';
 
 const PICTURES_AMOUNT = 25;
 const BIG_PIC_INDEX = 1;
@@ -25,7 +37,8 @@ renderBigPicture(bigPictureElement, createPicture(BIG_PIC_INDEX, PICTURES_DATA),
 
 uploadPictureInputElement.addEventListener(`change`, uploadFormOpenHandler);
 document.addEventListener(`keydown`, (evt) => {
-  if (evt.keyCode === ESCAPE_CODE && !uploadPictureOverlayElement.classList.contains(`hidden`)) {
+  if (evt.keyCode === ESCAPE_CODE && !uploadPictureOverlayElement.classList.contains(`hidden`) &&
+      document.activeElement !== hashTagsInputElement && document.activeElement !== descriptionTextAreaElement) {
     uploadFormCancelHandler();
   }
 });
