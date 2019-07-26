@@ -1,6 +1,12 @@
 const MAX_HASHRAGS_NUMBER = 5;
 const MAX_HASHTAG_LENGTH = 20;
 
+const SCALE_PERCENT = {
+  MIN: 25,
+  MAX: 100,
+  STEP: 25
+};
+
 const uploadPictureFormElement = document.querySelector(`#upload-select-image`);
 const uploadPictureOverlayElement = uploadPictureFormElement.querySelector(`.img-upload__overlay`);
 
@@ -13,6 +19,35 @@ const descriptionTextAreaElement = uploadPictureFormElement.querySelector(`.text
 
 const effectLevelBarElement = uploadPictureOverlayElement.querySelector(`.img-upload__effect-level`);
 const effectLevelPinElement = uploadPictureOverlayElement.querySelector(`.effect-level__pin`);
+
+const scaleDecreaseButtonElement = uploadPictureOverlayElement.querySelector(`.scale__control--smaller`);
+const scaleIncreaseButtonElement = uploadPictureOverlayElement.querySelector(`.scale__control--bigger`);
+const scaleInputElement = uploadPictureOverlayElement.querySelector(`.scale__control--value`);
+
+const rescalePictureHandler = function (direction) {
+  let scale = parseInt(scaleInputElement.value, 10);
+
+  switch (true) {
+    case (direction === `decrease`):
+      scale = (scale <= SCALE_PERCENT.MIN) ? SCALE_PERCENT.MIN : scale - SCALE_PERCENT.STEP;
+      break;
+    case (direction === `increase`):
+      scale = (scale >= SCALE_PERCENT.MAX) ? SCALE_PERCENT.MAX : scale + SCALE_PERCENT.STEP;
+      break;
+    default:
+      break;
+  }
+  scaleInputElement.value = `${scale}%`;
+  picturePreviewElement.setAttribute(`style`, `transform: scale(${ scale / 100})`);
+};
+
+scaleDecreaseButtonElement.addEventListener(`click`, () => {
+  rescalePictureHandler(`decrease`);
+});
+
+scaleIncreaseButtonElement.addEventListener(`click`, () => {
+  rescalePictureHandler(`increase`);
+});
 
 const uploadFormCancelHandler = () => {
   uploadPictureFormElement.reset();
