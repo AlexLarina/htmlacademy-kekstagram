@@ -1,9 +1,14 @@
 const chooseFilterHandler = (evt, picture, levelBar) => {
   let filter = evt.target.hasAttribute(`value`) ? evt.target.getAttribute(`value`) : null;
-  filter === `none` ? levelBar.classList.add(`visually-hidden`) : levelBar.classList.remove(`visually-hidden`);
+  if (filter === `none`) {
+    levelBar.classList.add(`visually-hidden`);
+  } else {
+    levelBar.classList.remove(`visually-hidden`);
+  }
   picture.removeAttribute(`class`);
   picture.classList.add(`effects__preview--` + filter);
 };
+
 
 const changeFilterIntensity = (picture, filter, intensity) => {
   switch (filter) {
