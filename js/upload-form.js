@@ -1,5 +1,15 @@
-const MAX_HASHRAGS_NUMBER = 5;
-const MAX_HASHTAG_LENGTH = 20;
+import {
+  rescalePictureHandler
+} from './effect-rescale';
+import {
+  validateHashTags,
+  tagsInputHandler
+} from './validation';
+import {
+  effectLevelHandler,
+  resetFilters,
+  chooseFilterHandler
+} from './effect-filter';
 
 const uploadPictureFormElement = document.querySelector(`#upload-select-image`);
 const uploadPictureOverlayElement = uploadPictureFormElement.querySelector(`.img-upload__overlay`);
@@ -12,7 +22,14 @@ const hashTagsInputElement = uploadPictureFormElement.querySelector(`.text__hash
 const descriptionTextAreaElement = uploadPictureFormElement.querySelector(`.text__description`);
 
 const effectLevelBarElement = uploadPictureOverlayElement.querySelector(`.img-upload__effect-level`);
+
 const effectLevelPinElement = uploadPictureOverlayElement.querySelector(`.effect-level__pin`);
+const effectLevelLineElement = uploadPictureOverlayElement.querySelector(`.effect-level__line`);
+const effectLevelDepthElement = uploadPictureOverlayElement.querySelector(`.effect-level__depth`);
+
+const scaleDecreaseButtonElement = uploadPictureOverlayElement.querySelector(`.scale__control--smaller`);
+const scaleIncreaseButtonElement = uploadPictureOverlayElement.querySelector(`.scale__control--bigger`);
+const scaleInputElement = uploadPictureOverlayElement.querySelector(`.scale__control--value`);
 
 const uploadFormCancelHandler = () => {
   uploadPictureFormElement.reset();
@@ -24,53 +41,21 @@ const uploadFormOpenHandler = (evt) => {
   uploadPictureOverlayElement.classList.remove(`hidden`);
 };
 
-effectsFieldsetElement.addEventListener(`click`, (evt) => {
-  let filter = evt.target.hasAttribute(`value`) ? evt.target.getAttribute(`value`) : null;
-  filter === `none` ? effectLevelBarElement.classList.add(`visually-hidden`) : effectLevelBarElement.classList.remove(`visually-hidden`);
-  picturePreviewElement.removeAttribute(`class`);
-  picturePreviewElement.classList.add(`effects__preview--` + filter);
+scaleDecreaseButtonElement.addEventListener(`click`, () => {
+  rescalePictureHandler(picturePreviewElement, scaleInputElement, `decrease`);
 });
 
-uploadPictureElementCancelBtn.addEventListener(`click`, uploadFormCancelHandler);
+scaleIncreaseButtonElement.addEventListener(`click`, () => {
+  rescalePictureHandler(picturePreviewElement, scaleInputElement, `increase`);
+});
 
-const validateHashTags = (tagsString) => {
-  const tagsArray = tagsString.trim().split(` `).map((tag) => tag.toLowerCase());
-
-  let errorMessage = checkTagsAmount(tagsArray, MAX_HASHRAGS_NUMBER);
-  errorMessage += tagsArray.every(isBeganWithLatticeSymbol) ? `` : `Каждый тэг должен начинаться с символа #\n `;
-  errorMessage += tagsArray.every(isTagEmpty) ? `` : `Тэг не может быть пустым.\n `;
-  errorMessage += tagsArray.every(isSpaceBetweenTags) ? `` : `Тэги должны разделяться пробелами!\n `;
-  errorMessage += tagsArray.every(isTagTooLong) ? `Длина тэга не должна превышать ${MAX_HASHTAG_LENGTH}` : ``;
-  errorMessage += checkUniqueTags(tagsArray);
-
-  return errorMessage;
-};
-
-const isBeganWithLatticeSymbol = (tag) => tag[0] === `#`;
-const isTagEmpty = (tag) => (tag.length > 1);
-const isTagTooLong = (tag) => tag.length >= MAX_HASHTAG_LENGTH;
-
-// @TO-DO rewrite method
-const isSpaceBetweenTags = (tag) => tag.indexOf(`#`, 1) === -1;
-
-const checkTagsAmount = (tags, maxAmount) => (tags.length <= maxAmount) ? `` : `Тегов не должно быть больше ${maxAmount}.\n`;
-
-// @TO-DO rewrite to something more elegant
-const checkUniqueTags = (tags) => {
-  let error = ``;
-  tags.filter((tag, index) => {
-    error = tags.indexOf(tag) === index ? `` : `Тэги должны быть уникальными.\n`;
-  });
-
-  return error;
-};
+effectsFieldsetElement.addEventListener(`click`, (evt) => {
+  resetFilters(picturePreviewElement, effectLevelPinElement, effectLevelDepthElement);
+  chooseFilterHandler(evt, picturePreviewElement, effectLevelBarElement);
+});
 
 hashTagsInputElement.addEventListener(`change`, (evt) => {
-  let hashTags = evt.target.value;
-  let error = validateHashTags(hashTags);
-  if (error.length !== 0) {
-    hashTagsInputElement.setCustomValidity(error);
-  }
+  tagsInputHandler(evt, hashTagsInputElement);
 });
 
 uploadPictureFormElement.addEventListener(`submit`, (evt) => {
@@ -79,5 +64,11 @@ uploadPictureFormElement.addEventListener(`submit`, (evt) => {
   const hashTags = formData.get(`hashtags`);
   validateHashTags(hashTags);
 });
+
+effectLevelPinElement.addEventListener(`mousedown`, (evt) => {
+  effectLevelHandler(evt, effectLevelLineElement, effectLevelPinElement, effectLevelDepthElement, picturePreviewElement);
+});
+
+uploadPictureElementCancelBtn.addEventListener(`click`, uploadFormCancelHandler);
 
 export {uploadFormCancelHandler, uploadFormOpenHandler, hashTagsInputElement, descriptionTextAreaElement};
