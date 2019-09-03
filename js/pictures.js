@@ -1,7 +1,8 @@
 const MAX_COMMENTS_SHOWN = 5;
 let SHOW_COMMENTS_START_INDEX = 0;
 
-const bigPictureElementTemplate = document.querySelector(`.big-picture`);
+const bigPictureContainerElement = document.querySelector(`.big-picture`);
+const bigPicturePreviewTemplate = document.querySelector(`#bigpic`).content.querySelector(`.big-picture__preview`);
 const pictureTemplate = document.querySelector(`#picture`).content.querySelector(`.picture`);
 
 const removeChildrenNodes = (element) => {
@@ -84,6 +85,7 @@ const renderBigPicture = (element, data, commentsLimit) => {
 
   const bigPictureCancelBtnElement = element.querySelector(`.big-picture__cancel`);
   bigPictureCancelBtnElement.addEventListener(`click`, () => {
+    bigPictureContainerElement.classList.add(`hidden`);
     element.classList.add(`hidden`);
   });
 
@@ -95,17 +97,11 @@ const renderBigPicture = (element, data, commentsLimit) => {
 };
 
 const bigPictureRenderHandler = (data) => {
-  const bigPictureElement = bigPictureElementTemplate.cloneNode(true);
-  // removeChildrenNodes(bigPictureElementTemplate);
-  console.log(bigPictureElement);
-  if (bigPictureElement.classList.contains(`hidden`)) {
-    bigPictureElement.classList.remove(`hidden`);
-    renderBigPicture(bigPictureElement, data, MAX_COMMENTS_SHOWN);
-  } else {
-    removeChildrenNodes(bigPictureElementTemplate);
-  }
-  bigPictureElement.classList.remove(`hidden`);
-  renderBigPicture(bigPictureElement, data, MAX_COMMENTS_SHOWN);
+  const bigPictureElement = bigPicturePreviewTemplate.cloneNode(true);
+  const bigPicturePreviewElement = document.querySelector(`.big-picture__preview`);
+  bigPictureContainerElement.classList.remove(`hidden`);
+  bigPictureContainerElement.removeChild(bigPicturePreviewElement);
+  bigPictureContainerElement.appendChild(renderBigPicture(bigPictureElement, data, MAX_COMMENTS_SHOWN));
 };
 
 const createPictureNode = (data) => {
