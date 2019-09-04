@@ -5,12 +5,6 @@ const bigPictureContainerElement = document.querySelector(`.big-picture`);
 const bigPicturePreviewTemplate = document.querySelector(`#bigpic`).content.querySelector(`.big-picture__preview`);
 const pictureTemplate = document.querySelector(`#picture`).content.querySelector(`.picture`);
 
-const removeChildrenNodes = (element) => {
-  while (element.firstChild) {
-    element.removeChild(element.firstChild);
-  }
-};
-
 const createExtraCommentNodes = (comments) => {
   const container = document.createElement(`div`);
   container.innerHTML = comments;
@@ -28,6 +22,12 @@ const fillFragment = (fragment, dataArray, callback) => {
     });
   }
   return fragment;
+};
+
+const renderCommentsCount = (data, commentsLimit) => {
+  return `${data.comments.length <= commentsLimit ? data.comments.length : commentsLimit}
+  из <span class="comments-count">${data.comments.length}</span> комментариев
+  `.trim();
 };
 
 const renderComments = (comments, start) => {
@@ -66,6 +66,11 @@ const loadCommentsHadler = (button, comments, counter, data) => {
   `.trim();
 };
 
+const closeBigPictureHandler = (element) => {
+  bigPictureContainerElement.classList.add(`hidden`);
+  element.classList.add(`hidden`);
+};
+
 const renderBigPicture = (element, data, commentsLimit) => {
   const loadMoreCommentsBtnElement = element.querySelector(`.social__comments-loader`);
   const commentsCountElement = element.querySelector(`.social__comment-count`);
@@ -74,19 +79,16 @@ const renderBigPicture = (element, data, commentsLimit) => {
 
   element.querySelector(`.big-picture__img img`).src = data.url;
   element.querySelector(`.likes-count`).textContent = data.likes;
-  commentsCountElement.innerHTML = `
-    ${data.comments.length <= commentsLimit ? data.comments.length : commentsLimit}
-    из <span class="comments-count">${data.comments.length}</span> комментариев
-    `.trim();
   element.querySelector(`.social__caption`).textContent = data.description;
 
+  commentsCountElement.innerHTML = renderCommentsCount(data, commentsLimit)
   commentsElement.innerHTML = renderComments(data.comments, SHOW_COMMENTS_START_INDEX);
+  
   SHOW_COMMENTS_START_INDEX += MAX_COMMENTS_SHOWN;
 
   const bigPictureCancelBtnElement = element.querySelector(`.big-picture__cancel`);
   bigPictureCancelBtnElement.addEventListener(`click`, () => {
-    bigPictureContainerElement.classList.add(`hidden`);
-    element.classList.add(`hidden`);
+    closeBigPictureHandler(element);
   });
 
   loadMoreCommentsBtnElement.addEventListener(`click`, () => {
@@ -99,6 +101,7 @@ const renderBigPicture = (element, data, commentsLimit) => {
 const bigPictureRenderHandler = (data) => {
   const bigPictureElement = bigPicturePreviewTemplate.cloneNode(true);
   const bigPicturePreviewElement = document.querySelector(`.big-picture__preview`);
+  SHOW_COMMENTS_START_INDEX = 0;
   bigPictureContainerElement.classList.remove(`hidden`);
   bigPictureContainerElement.removeChild(bigPicturePreviewElement);
   bigPictureContainerElement.appendChild(renderBigPicture(bigPictureElement, data, MAX_COMMENTS_SHOWN));
