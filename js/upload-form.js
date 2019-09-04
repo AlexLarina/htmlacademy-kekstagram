@@ -10,6 +10,12 @@ import {
   resetFilters,
   chooseFilterHandler
 } from './effect-filter';
+import {uploadData} from './backend';
+
+const UPLOAD_URL = `https://js.dump.academy/kekstagram.`;
+
+const successUploadMsgTemplate = document.querySelector(`#success`).content.querySelector(`.success`);
+const errorUploadMsgTemplate = document.querySelector(`#error`).content.querySelector(`.error`);
 
 const uploadPictureFormElement = document.querySelector(`#upload-select-image`);
 const uploadPictureOverlayElement = uploadPictureFormElement.querySelector(`.img-upload__overlay`);
@@ -58,11 +64,52 @@ hashTagsInputElement.addEventListener(`change`, (evt) => {
   tagsInputHandler(evt, hashTagsInputElement);
 });
 
+const successUploadMsgRender = () => {
+  const successUploadMsgElement = successUploadMsgTemplate.cloneNode(true);
+  document.body.insertAdjacentElement(`afterbegin`, successUploadMsgElement);
+
+  const successUploadMsgCloseBtnElement = successUploadMsgElement.querySelector(`.success__button`);
+  successUploadMsgCloseBtnElement.addEventListener(`click`, () => {
+    successUploadMsgElement.remove();
+  });
+};
+
+const errorUploadMsgRender = () => {
+  const errorUploadMsgElement = errorUploadMsgTemplate.cloneNode(true);
+  document.body.insertAdjacentElement(`afterbegin`, errorUploadMsgElement);
+
+  // @TO-DO хорошо бы повесить два разных обработчика на эти кнопки
+  const errorUploadMsgRetryBtnElement = errorUploadMsgElement.querySelector(`.error__button--retry`);
+
+  errorUploadMsgRetryBtnElement.addEventListener(`click`, () => {
+    // @TO-DO
+  });
+
+  const errorUploadMsgResetBtnElement = errorUploadMsgElement.querySelector(`.error__button--reset`);
+  errorUploadMsgResetBtnElement.addEventListener(`click`, (evt) => {
+    uploadFormOpenHandler(evt);
+    errorUploadMsgElement.remove();
+  });
+};
+
+const sussessUploadDataHandler = () => {
+  uploadFormCancelHandler();
+  successUploadMsgRender();
+  console.log(`Данные формы отправлены успешно`);
+};
+
+const errorUploadDataHandler = (status, text) => {
+  uploadFormCancelHandler();
+  errorUploadMsgRender();
+  console.log('Something went wrong');
+};
+
 uploadPictureFormElement.addEventListener(`submit`, (evt) => {
   evt.preventDefault();
   const formData = new FormData(uploadPictureFormElement);
   const hashTags = formData.get(`hashtags`);
   validateHashTags(hashTags);
+  uploadData(UPLOAD_URL, formData, sussessUploadDataHandler, errorUploadDataHandler);
 });
 
 effectLevelPinElement.addEventListener(`mousedown`, (evt) => {
