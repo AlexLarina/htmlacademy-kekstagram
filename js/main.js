@@ -21,6 +21,8 @@ import {
   activateFilter
 } from './filters';
 
+import debounce from './debounce';
+
 const ESCAPE_CODE = 27;
 const NEW_AMOUNT = 11;
 
@@ -44,15 +46,20 @@ const removePictureNodes = (parentNode) => {
   });
 };
 
+const renderPictures = (data) => {
+  picturesContainerElement.appendChild(fillFragment(pictureContentFragment, data, createPictureNode));
+};
+
 const filtrateHandler = (filterElement, filtrate, dataArray, size = null) => {
   activateFilter(filterElement);
   removePictureNodes(picturesContainerElement);
   const filteredArray = filtrate(dataArray, size);
-  picturesContainerElement.appendChild(fillFragment(pictureContentFragment, filteredArray, createPictureNode));
+  renderPictures(filteredArray);
+  debounce(renderPictures);
 }
 
 const sussessLoad = (dataArray) => {
-  picturesContainerElement.appendChild(fillFragment(pictureContentFragment, dataArray, createPictureNode));
+  renderPictures(dataArray);
   showFilters(filtersContainerElement);
 
   popularPicturesFilterElement.addEventListener(`click`, () => {
