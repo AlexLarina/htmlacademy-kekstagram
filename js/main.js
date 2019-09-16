@@ -22,6 +22,7 @@ import {
 } from './filters';
 
 import debounce from './debounce';
+import uploadPreview from './upload-preview';
 
 const ESCAPE_CODE = 27;
 const NEW_AMOUNT = 11;
@@ -79,7 +80,10 @@ const errorLoad = () => {};
 
 loadData(`https://js.dump.academy/kekstagram/data`, sussessLoad, errorLoad);
 
-uploadPictureInputElement.addEventListener(`change`, uploadFormOpenHandler);
+uploadPictureInputElement.addEventListener(`change`, (evt) => {
+  uploadPreview(uploadPictureInputElement);
+});
+
 document.addEventListener(`keydown`, (evt) => {
   if (evt.keyCode === ESCAPE_CODE && !uploadPictureOverlayElement.classList.contains(`hidden`) &&
       document.activeElement !== hashTagsInputElement && document.activeElement !== descriptionTextAreaElement) {

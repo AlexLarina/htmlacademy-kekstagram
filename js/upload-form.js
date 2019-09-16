@@ -12,7 +12,7 @@ import {
 } from './effect-filter';
 import {uploadData} from './backend';
 
-const UPLOAD_URL = `https://js.dump.academy/kekstagram.`;
+const UPLOAD_URL = `https://js.dump.academy/kekstagram`;
 
 const successUploadMsgTemplate = document.querySelector(`#success`).content.querySelector(`.success`);
 const errorUploadMsgTemplate = document.querySelector(`#error`).content.querySelector(`.error`);
@@ -42,8 +42,7 @@ const uploadFormCancelHandler = () => {
   uploadPictureOverlayElement.classList.add(`hidden`);
 };
 
-const uploadFormOpenHandler = (evt) => {
-  evt.preventDefault();
+const uploadFormOpenHandler = () => {
   uploadPictureOverlayElement.classList.remove(`hidden`);
 };
 
@@ -86,8 +85,8 @@ const errorUploadMsgRender = () => {
   });
 
   const errorUploadMsgResetBtnElement = errorUploadMsgElement.querySelector(`.error__button--reset`);
-  errorUploadMsgResetBtnElement.addEventListener(`click`, (evt) => {
-    uploadFormOpenHandler(evt);
+  errorUploadMsgResetBtnElement.addEventListener(`click`, () => {
+    uploadFormOpenHandler();
     errorUploadMsgElement.remove();
   });
 };
